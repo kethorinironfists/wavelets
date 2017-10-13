@@ -25,6 +25,24 @@ void HaarReconstruction(vld &v) {
 	for(int i=0; i<tam; i++) v[i] = ret[i];
 }
 
+ld GetLim(vld &v, ld alfa) {
+	int tam = v.size();
+	int pos = (int)((ld)tam * (1.00 - alfa));
+	if(pos == tam) pos = tam - 1;
+	cout<<pos<<endl;
+	vld u(v);
+	for(int i=0; i<tam; i++) u[i] = fabs(u[i]);
+	sort(u.begin(), u.end());
+	return u[pos];
+}
+
+void JogaFora(vld &v, ld lim) {
+	int tam = v.size();
+	for(int i=0; i<tam; i++) {
+		if(fabs(v[i]) < lim) v[i] = 0;
+	}
+}
+
 void VectorDecomposition(vld &v) {
 	HaarDecomposition(v);
 }

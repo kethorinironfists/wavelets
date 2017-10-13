@@ -20,9 +20,9 @@ class WaveletDecomposition {
 
 		PGM salva();
 
-		void DecompositionLin();
+		void DecompositionLin(int lim1, int lim2);
 
-		void DecompositionCol();
+		void DecompositionCol(int lim1, int lim2);
 
 		void ReconstructLin(int lim1, int lim2);
 
@@ -33,6 +33,8 @@ class WaveletDecomposition {
 		void Decomposition();
 
 		void Reconstruction();
+
+		void Compression(ld alfa);
 };
 
 #endif

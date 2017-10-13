@@ -9,6 +9,7 @@
 #include <string>
 #include <iomanip>
 #include <cassert>
+#include <cmath>
 
 #define BUFF ios::sync_with_stdio(false)
 

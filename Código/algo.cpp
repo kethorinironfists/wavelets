@@ -11,10 +11,6 @@ void WaveletDecomposition::constroi(PGM p) {
 	lin = 1, col = 1;
 	while(lin < lin_original) lin += lin;
 	while(col < col_original) col += col;
-	cout<<lin<<' '<<col<<endl;
-
-	cont_lin = col;
-	cont_col = lin;
 
 	mat = vvld(lin, vld(col, 0));
 	for(int i=0; i<lin_original; i++) {
@@ -43,31 +39,31 @@ PGM WaveletDecomposition::salva() {
 }
 
 
-void WaveletDecomposition::DecompositionLin() {
-	backup.push(monta('L', lin, col));
+void WaveletDecomposition::DecompositionLin(int lim1, int lim2) {
+	backup.push(monta('L', lim1, lim2));
 
-	for(int i=0; i<lin; i++) {
-		vld v(col);
-		for(int j=0; j<col; j++) {
+	for(int i=0; i<lim1; i++) {
+		vld v(lim2);
+		for(int j=0; j<lim2; j++) {
 			v[j] = mat[i][j];
 		}
 		VectorDecomposition(v);
-		for(int j=0; j<col; j++) {
+		for(int j=0; j<lim2; j++) {
 			mat[i][j] = v[j];
 		}
 	}
 }
 
-void WaveletDecomposition::DecompositionCol() {
-	backup.push(monta('C', col, lin));
+void WaveletDecomposition::DecompositionCol(int lim1, int lim2) {
+	backup.push(monta('C', lim1, lim2));
 
-	for(int j=0; j<col; j++) {
-		vld v(lin);
-		for(int i=0; i<lin; i++) {
+	for(int j=0; j<lim1; j++) {
+		vld v(lim2);
+		for(int i=0; i<lim2; i++) {
 			v[i] = mat[i][j];
 		}
 		VectorDecomposition(v);
-		for(int i=0; i<lin; i++) {
+		for(int i=0; i<lim2; i++) {
 			mat[i][j] = v[i];
 		}
 	}
@@ -116,27 +112,31 @@ void WaveletDecomposition::pergunta() {
 void WaveletDecomposition::Decomposition() {
 	cout<<"Decompondo a imagem..."<<endl;
 
-	while(lin > 1 and col > 1) {
-		DecompositionLin();
+	int lim1 = lin, lim2 = col;
+
+	while(lim1 > 1 and lim2 > 1) {
+		DecompositionLin(lim1, lim2);
 
 		pergunta();
 
-		DecompositionCol();
+		DecompositionCol(lim2, lim1);
 
 		pergunta();
 
-		lin /= 2;
-		col /= 2;
+		lim1 /= 2;
+		lim2 /= 2;
 	}
 
-	while(col > 1) {
-		DecompositionLin();
-		col /= 2;
+	while(lim2 > 1) {
+		DecompositionLin(lim1, lim2);
+		//pergunta();
+		lim2 /= 2;
 	}
 
-	while(lin > 1) {
-		DecompositionCol();
-		lin /= 2;
+	while(lim1 > 1) {
+		DecompositionCol(lim2, lim1);
+		pergunta();
+		lim1 /= 2;
 	}
 }
 
@@ -153,6 +153,21 @@ void WaveletDecomposition::Reconstruction() {
 			ReconstructCol(p.principal, p.secundario);
 		}
 		
-		pergunta();
+		//pergunta();
+	}
+}
+
+void WaveletDecomposition::Compression(ld alfa) {
+	vld v;
+	for(int i=0; i<lin; i++) {
+		for(int j=0; j<col; j++) {
+			v.push_back(fabs(mat[i][j]));
+		}
+	}
+
+	alfa = GetLim(v, alfa);
+
+	for(int i=0; i<lin; i++) {
+		JogaFora(mat[i], alfa);
 	}
 }
